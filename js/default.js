@@ -56,16 +56,20 @@ Visualization.prototype.start = function () {
 Visualization.prototype.render = function(frequencyData){
     var canvas = document.getElementById("visualization");
     var context = canvas.getContext("2d");
-    var imageData = context.getImageData(0, 0, window.innerWidth/2, window.innerHeight/2);
+    // Clear previous draw
+    context.clearRect ( 0 , 0 , canvas.width, canvas.height );
+    var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     var data = imageData.data;
-    // Rows
-    for(var i=0; i<window.innerHeight;i++){
-        // Columns
-        for(var j=0;j<window.innerWidth;j++){
-            var pos = ((i*window.innerWidth)+j)*4;
-            data[pos] = frequencyData[i];// Red
-            data[pos+1] = frequencyData[i+100];// Green
-            data[pos+2] = frequencyData[i+200];// Blue
+    // Columns
+    for(var i=0; i<canvas.width;i++){
+        var val = frequencyData[i];
+        // Rows
+        for(var j=0;j<val*2;j++){
+            //var pos = ((i*1024)+j)*4;
+            var pos = ((canvas.height-j)*canvas.width+i)*4;
+            data[pos] = 255;// Red
+            data[pos+1] = 100;// Green
+            data[pos+2] = 100;// Blue
             data[pos+3] = 255;// Alpha
         }
     }
