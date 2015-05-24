@@ -1,4 +1,21 @@
+body{
+    background-color: black;
+}
+
 #visualization{
     height: 256px;
     width: 1024px;
+}
+
+#play{
+    height:128px;
+    width: 128px;
+}
+
+#play[data-paused=false]{
+    background-image: url("../media/img/icons/audio_pause.png");
+}
+
+#play[data-paused=true]{
+    background-image: url("../media/img/icons/audio_play.png");
 }
