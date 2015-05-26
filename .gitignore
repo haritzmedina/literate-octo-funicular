@@ -1,1 +1,5 @@
+# IntelliJ project
 .idea/
+
+# Songs
+*.mp3
