@@ -2,11 +2,6 @@ body{
     background-color: black;
 }
 
-#visualization{
-    height: 500px;
-    width: 1024px;
-}
-
 #play{
     height:128px;
     width: 128px;

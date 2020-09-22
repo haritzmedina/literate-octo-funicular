@@ -7,16 +7,10 @@ Analyzer.prototype.initialize = function(audio, visualization){
     this.visualization = visualization;
     // Create the analyzer context
     this.createAnalyzer(audio);
-    // Testing purposes
-    this.test();
 };
 
 Analyzer.prototype.updateVisualization = function(visualization){
     this.visualization = visualization;
-};
-
-Analyzer.prototype.test = function(){
-
 };
 
 Analyzer.prototype.createAnalyzer = function(audio){
@@ -33,6 +27,7 @@ Analyzer.prototype.createAnalyzer = function(audio){
         window.requestAnimationFrame(renderFrame);
         // Stop if the song is stopped
         if (audio.paused == true) {
+            me.visualization.clear();
             return;
         }
         // Update data in frequencyData
@@ -44,7 +39,10 @@ Analyzer.prototype.createAnalyzer = function(audio){
     renderFrame();
 };
 
-Visualization = function(){};
+Visualization = function(width, height){
+
+};
+
 Visualization.prototype.initialize = function(){
     // Create the canvas where the visualization will be
     this.createVisualizationCanvas();
@@ -52,11 +50,16 @@ Visualization.prototype.initialize = function(){
     this.test();
 };
 
-Visualization.prototype.createVisualizationCanvas = function () {
-    var canvas = document.getElementById("visualization");
-    var context = canvas.getContext("2d");
-    context.canvas.width = window.innerWidth;
-    context.canvas.height = window.innerHeight;
+Visualization.prototype.createVisualizationCanvas = function (where) {
+    if(where){
+
+    }
+    var canvas = document.createElement('canvas');
+    canvas.id = "visualization";
+    document.body.appendChild(canvas);
+    var context = canvas.getContext('2d');
+    context.canvas.width = window.innerWidth-10;
+    context.canvas.height = window.innerHeight-200;
 
 };
 
@@ -71,10 +74,6 @@ Visualization.prototype.clear = function(){
     context.clearRect ( 0 , 0 , canvas.width, canvas.height);
 };
 
-Visualization.prototype.play = function(){
-    var audio = document.getElementById('audio');
-    audio.play();
-};
 
 Visualization.prototype.render = function(frequencyData){
     var canvas = document.getElementById("visualization");
@@ -84,8 +83,8 @@ Visualization.prototype.render = function(frequencyData){
     var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     var data = imageData.data;
     // Columns
-    for(var i=0; i<canvas.width;i++){
-        var val = (frequencyData[i]+100)*4;
+    for(var i=0; i<canvas.width*1;i+=2){
+        var val = (frequencyData[Math.floor(i/2)]+100)*10;
         var j;
         // First 30% rows blue
         for(j=0;j<val*0.3;j++){
@@ -117,14 +116,25 @@ var MusicVisualization = MusicVisualization || {
         analyzer : new Analyzer(),
         visualization : new Visualization(),
         initialize : function(){
-            var audio = document.getElementById('audio');
             this.visualization.initialize();
-            this.analyzer.initialize(audio, this.visualization);
+            // Set listeners
+            document.querySelector('#files').addEventListener('change', this.renderUploadedSong, false);
+        },
+        renderUploadedSong: function(event){
+            var files = event.target.files; // FileList object
+            var freader = new FileReader();
 
+            freader.onload = function (e) {
+                console.log('Loading');
+                document.querySelector('#audio').src = freader.result;
+                console.log('Loading');
+            };
+            freader.readAsDataURL(files[0]);
         },
         play : function(){
+            console.log('Playing');
             var audio = document.getElementById('audio');
-            audio.load();
+            this.analyzer.initialize(audio, this.visualization);
             audio.play();
         },
         pause : function(){
@@ -139,4 +149,7 @@ var MusicVisualization = MusicVisualization || {
         }
     };
 
-MusicVisualization.initialize();
+window.onload = function() {
+    console.log('Hey');
+    MusicVisualization.initialize();
+};
